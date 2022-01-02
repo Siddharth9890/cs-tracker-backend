@@ -36,7 +36,7 @@ app.use(
 );
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "https://cs-tracker.pages.dev/");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
   res.header(
     "Access-Control-Allow-Headers",
