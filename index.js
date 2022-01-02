@@ -36,20 +36,8 @@ app.use(xss());
 //   })
 // );
 
-// app.use(
-//   cors({
-//     methods: "GET,POST,PATCH,DELETE,OPTIONS",
-//     optionsSuccessStatus: 200,
-//     origin: "https://cs-tracker.pages.dev/",
-//     preflightContinue:true,
-
-//   })
-// );
-// app.options("*", cors());
-
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST,DELETE");
   res.header(
     "Access-Control-Allow-Headers",
