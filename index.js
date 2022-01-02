@@ -31,7 +31,7 @@ app.use(xss());
 
 app.use(
   cors({
-    origin: ["http:localhost:3000"],
+    origin: "https://cs-tracker.pages.dev/",
   })
 );
 
