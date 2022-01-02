@@ -29,14 +29,14 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
 
-app.use(
-  cors({
-    origin: "https://cs-tracker.pages.dev/",
-  })
-);
+// app.use(
+//   cors({
+//     origin: "https://cs-tracker.pages.dev/",
+//   })
+// );
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://cs-tracker.pages.dev/*");
+  res.header("Access-Control-Allow-Origin", "https://cs-tracker.pages.dev/");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST,DELETE");
   res.header(
     "Access-Control-Allow-Headers",
