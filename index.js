@@ -29,11 +29,12 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
 
-// app.use(
-//   cors({
-//     origin: "https://cs-tracker.pages.dev/",
-//   })
-// );
+app.use(
+  cors({
+    origin: "https://cs-tracker.pages.dev/",
+    credentials: true,
+  })
+);
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
