@@ -20,8 +20,8 @@ async function getSubjectByName(request, response) {
   const subjectName = request.params.subjectName;
   if (!subjectName)
     return errorResponse(response, 400, "subject name cannot be empty");
-  if (myCache.has(subjectName))
-    return successResponse(response, 200, myCache.get(subjectName));
+  // if (myCache.has(subjectName))
+  //   return successResponse(response, 200, myCache.get(subjectName));
   else {
     try {
       const result = await SubjectModel.findOne({ name: subjectName });
