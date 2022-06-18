@@ -21,7 +21,8 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["https://cs-tracker.netlify.app"],
+    // origin: ["https://cs-tracker.netlify.app"],
+    origin: ["*"],
     credentials: true,
   })
 );
