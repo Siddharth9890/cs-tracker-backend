@@ -125,3 +125,33 @@ export const otpSchema = object({
       }),
   }),
 });
+
+export const updateSchema = object({
+  body: object({
+    email: string({ required_error: "Email is required" })
+      .nonempty({ message: "email can't be empty" })
+      .email("Not a valid email")
+      .min(5, "email should not be less than 5 characters")
+      .max(50, "email should not be greater than 50 characters")
+      .trim()
+      .refine(
+        async (email) => {
+          const user = await User.findOne({ where: { email } });
+          if (!user) return false;
+          else return true;
+        },
+        {
+          message:
+            "The entered email is does not exist. Please check the email",
+        }
+      )
+      .refine(
+        async (email) => {
+          const user = await User.findOne({ where: { email } });
+          if (!user) return false;
+          else return user.account_status === "active";
+        },
+        { message: "You account is not active.Please contact support" }
+      ),
+  }),
+});

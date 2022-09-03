@@ -2,8 +2,7 @@ import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
 dotenv.config();
-const connection = `postgres://${process.env.DATABASE_USER_NAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}`;
-
+const connection = `postgres://${process.env.DATABASE_USER_NAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}?sslmode=verify-full&options=--cluster=${process.env.COCKROACH_DB}`;
 const sequelize = new Sequelize(connection, {
   dialectOptions: {
     ssl: {

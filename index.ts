@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import { limiter } from "./src/utils/rateLimiter";
 import routes from "./routes";
 import { makeConnectionWithDB } from "./db";
-// import loadData from "./insertData";
+import loadData from "./insertData";
 
 dotenv.config();
 const app = express();

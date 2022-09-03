@@ -13,42 +13,51 @@ import {
 } from "../DataAccessLayer/user.dal";
 import { sendMail } from "../utils/email";
 import generateTokens from "../utils/generateToken";
+import { UserOutput } from "../models/User";
 
 dotenv.config();
 
 const nanoid = customAlphabet("0123456789", 6);
 
-export const createUser = async (request: Request, response: Response) => {
+export async function createUser(request: Request, response: Response) {
   let payload = request.body;
   try {
     let user = await createUserDal(payload);
 
-    const { accessToken, refreshToken } = generateTokens(user);
-    user.refresh_token = refreshToken;
-
-    user = await updateUserDal(user.user_id, user);
-    user.refresh_token = "";
-    const date = new Date();
-    date.setDate(date.getDate() + parseInt(process.env.COOKIE_MAX_AGE!));
-
-    response.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      expires: date,
-    });
-    return successResponse(response, 201, { user, accessToken });
+    const detailsToSend = {
+      email: user.email,
+      multi_factor_enabled: user.multi_factor_enabled,
+      verified: user.verified,
+    };
+    return successResponse(response, 201, { detailsToSend });
   } catch (error: any) {
     const message = "Something went wrong please try again";
     return errorResponse(response, 500, message);
   }
-};
+}
 
 async function login(request: Request, response: Response) {
   const { email } = request.body;
   try {
     let user = await getUserByEmailDal(email);
+
+    const detailsToSend = {
+      email: user.email,
+      multi_factor_enabled: user.multi_factor_enabled,
+      verified: user.verified,
+    };
+    return successResponse(response, 200, { detailsToSend });
+  } catch (error) {
+    return errorResponse(response, 500, error);
+  }
+}
+
+async function getUserAndGenerateTokens(request: Request, response: Response) {
+  const { email } = request.body;
+  try {
+    let user = await getUserByEmailDal(email);
     const { accessToken, refreshToken } = generateTokens(user);
     user.refresh_token = refreshToken;
-
     user = await updateUserDal(user.user_id, user);
     user.refresh_token = "";
     const date = new Date();
@@ -58,6 +67,28 @@ async function login(request: Request, response: Response) {
       expires: date,
     });
     return successResponse(response, 200, { user, accessToken });
+  } catch (error) {
+    return errorResponse(response, 500, error);
+  }
+}
+
+async function updateUser(request: Request, response: Response) {
+  const { user }: { user: UserOutput } = request.body;
+  console.log(user);
+  const cookies = request.cookies;
+  if (!cookies?.jwt) return response.sendStatus(204);
+  try {
+    const refreshToken = cookies.jwt;
+    if (refreshToken.length !== 187) return response.sendStatus(401);
+    if (!user.verified || !user.multi_factor_enabled) {
+      return successResponse(
+        response,
+        200,
+        "Account is not verified or mfa is not enabled"
+      );
+    }
+    await updateUserDal(user.user_id, user);
+    return successResponse(response, 201, { user });
   } catch (error) {
     return errorResponse(response, 500, error);
   }
@@ -205,4 +236,6 @@ export default {
   verifyAndValidateUser,
   getUserRefreshToken,
   deleteAccount,
+  getUserAndGenerateTokens,
+  updateUser,
 };

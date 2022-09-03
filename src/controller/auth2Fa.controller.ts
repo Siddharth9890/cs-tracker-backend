@@ -2,10 +2,7 @@ import speakeasy from "speakeasy";
 import { customAlphabet } from "nanoid";
 import { Request, Response } from "express";
 
-import {
-  getUserByRefreshTokenDal,
-  updateUserDal,
-} from "../DataAccessLayer/user.dal";
+import { getUserByEmailDal, updateUserDal } from "../DataAccessLayer/user.dal";
 import { errorResponse, successResponse } from "../utils/response.utils";
 
 const nanoid = customAlphabet(
@@ -14,15 +11,18 @@ const nanoid = customAlphabet(
 );
 
 async function register2Fa(request: Request, response: Response) {
-  const cookies = request.cookies;
-  if (!cookies?.jwt) return response.sendStatus(204);
+  const { email } = request.body;
 
   try {
-    const refreshToken = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
-
-    let user = await getUserByRefreshTokenDal(refreshToken);
+    let user = await getUserByEmailDal(email);
     if (!user) return response.sendStatus(403);
+
+    if (!user.verified)
+      return successResponse(
+        response,
+        400,
+        "You have not verified email please verify it before registering for 2 fa"
+      );
 
     if (user.account_status !== "active")
       return successResponse(
@@ -43,17 +43,20 @@ async function register2Fa(request: Request, response: Response) {
 }
 
 async function verify2Fa(request: Request, response: Response) {
-  const cookies = request.cookies;
-  if (!cookies?.jwt) return response.sendStatus(204);
+  const { email } = request.body;
 
   const { token }: { token: string } = request.body;
 
   try {
-    const refreshToken = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
-
-    let user = await getUserByRefreshTokenDal(refreshToken);
+    let user = await getUserByEmailDal(email);
     if (!user) return response.sendStatus(403);
+
+    if (!user.verified)
+      return successResponse(
+        response,
+        400,
+        "You have not verified email please verify it before verifying for 2 fa"
+      );
 
     if (user.account_status !== "active")
       return successResponse(
@@ -87,17 +90,20 @@ async function verify2Fa(request: Request, response: Response) {
 }
 
 async function verify2FaFuture(request: Request, response: Response) {
-  const cookies = request.cookies;
-  if (!cookies?.jwt) return response.sendStatus(204);
+  const { email } = request.body;
 
   const { token }: { token: string } = request.body;
 
   try {
-    const refreshToken = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
-
-    let user = await getUserByRefreshTokenDal(refreshToken);
+    let user = await getUserByEmailDal(email);
     if (!user) return response.sendStatus(403);
+
+    if (!user.verified)
+      return successResponse(
+        response,
+        400,
+        "You have not verified email please verify it before verifying for 2 fa"
+      );
 
     if (user.account_status !== "active")
       return successResponse(
@@ -127,17 +133,20 @@ async function verify2FaFuture(request: Request, response: Response) {
 }
 
 async function verifyBackupCode(request: Request, response: Response) {
-  const cookies = request.cookies;
-  if (!cookies?.jwt) return response.sendStatus(204);
+  const { email } = request.body;
 
   const { backup }: { backup: string } = request.body;
 
   try {
-    const refreshToken = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
-
-    let user = await getUserByRefreshTokenDal(refreshToken);
+    let user = await getUserByEmailDal(email);
     if (!user) return response.sendStatus(403);
+
+    if (!user.verified)
+      return successResponse(
+        response,
+        400,
+        "You have not verified email please verify it before verifying for backup code"
+      );
 
     if (user.account_status !== "active")
       return successResponse(

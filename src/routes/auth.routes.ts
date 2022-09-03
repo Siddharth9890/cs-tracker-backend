@@ -8,6 +8,7 @@ import {
   emailSchema,
   otpSchema,
   tokenSchema,
+  updateSchema,
 } from "../schema/user.schema";
 
 const router = express.Router();
@@ -24,17 +25,25 @@ router.post(
 // localhost:5000/api/v2/auth/login/
 router.post("/login", validateAsync(emailSchema), authController.login);
 
+router.post(
+  "/get-user",
+  validateAsync(emailSchema),
+  authController.getUserAndGenerateTokens
+);
+
 // send email to the user
 // localhost:5000/api/v2/auth/send-mail/
 router.post("/send-mail", validateAsync(emailSchema), authController.sendEmail);
 
 // validate account of the  user
-// localhost:5000/api/v2/auth/verified/
+// localhost:5000/api/v2/auth/validate/
 router.post(
   "/validate",
   validateAsync(otpSchema),
   authController.verifyAndValidateUser
 );
+
+router.put("/update", validateAsync(updateSchema), authController.updateUser);
 
 // logout a user
 // localhost:5000/api/v2/auth/logout/
