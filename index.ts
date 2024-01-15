@@ -19,17 +19,20 @@ app.use(xss());
 
 app.use(cookieParser());
 
+let urlsCors = ["https://cs-tracker.vercel.app"];
+if (process.env.NODE !== "production") {
+  urlsCors.push("http://localhost:3000");
+}
+
 app.use(
   cors({
-    origin: ["https://cs-tracker.vercel.app"],
+    origin: urlsCors,
     credentials: true,
   })
 );
 
 async function makeDatabase() {
   await makeConnectionWithDB();
-  // want to remove this
-  // await loadData();
 }
 
 app.use(express.json({ limit: "1kb" }));

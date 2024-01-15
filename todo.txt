@@ -1,0 +1,10 @@
+fix the frontend ui and auth 
+add sheets like 450 one stored locally if not logged in
+cookie management on brave
+admin panel on same frontend 
+by default dark mode
+for dev separate postgres db 
+add a demo user
+csrf and code tools should pass
+improve code quality
+deploy to serverless 
