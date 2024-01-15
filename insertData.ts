@@ -108,8 +108,8 @@ async function insertQuestionData() {
 }
 
 export default async function loadData() {
-  await insertSubjectData();
-  await insertTopicData();
-  await insertQuestionData();
-  await insertUserData();
+  // await insertSubjectData();
+  // await insertTopicData();
+  // await insertQuestionData();
+  // await insertUserData();
 }

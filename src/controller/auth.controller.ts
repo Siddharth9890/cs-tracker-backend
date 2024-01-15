@@ -57,14 +57,17 @@ async function getUserAndGenerateTokens(request: Request, response: Response) {
   try {
     let user = await getUserByEmailDal(email);
     const { accessToken, refreshToken } = generateTokens(user);
+    console.log(accessToken, refreshToken);
     user.refresh_token = refreshToken;
     user = await updateUserDal(user.user_id, user);
     user.refresh_token = "";
     const date = new Date();
     date.setDate(date.getDate() + parseInt(process.env.COOKIE_MAX_AGE!));
     response.cookie("jwt", refreshToken, {
-      httpOnly: true,
+      httpOnly: false,
       expires: date,
+      path: "/",
+      sameSite: "none",
     });
     return successResponse(response, 200, { user, accessToken });
   } catch (error) {
@@ -74,7 +77,6 @@ async function getUserAndGenerateTokens(request: Request, response: Response) {
 
 async function updateUser(request: Request, response: Response) {
   const { user }: { user: UserOutput } = request.body;
-  console.log(user);
   const cookies = request.cookies;
   if (!cookies?.jwt) return response.sendStatus(204);
   try {
@@ -203,6 +205,7 @@ async function getUserRefreshToken(request: Request, response: Response) {
     user.refresh_token = "";
     return response.json({ user });
   } catch (error) {
+    console.log(error);
     return response.sendStatus(500);
   }
 }

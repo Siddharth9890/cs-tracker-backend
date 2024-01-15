@@ -11,6 +11,7 @@ const verifyJWT = (
   const authHeader: string | undefined = request.headers["authorization"];
   if (!authHeader) return response.sendStatus(401);
   const token = authHeader.split(" ")[1];
+  console.log(token);
   try {
     jwt.verify(token, process.env.JWT_SECRET!);
     next();

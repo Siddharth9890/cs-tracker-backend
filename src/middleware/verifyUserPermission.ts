@@ -21,9 +21,11 @@ const verifyPermission = (
       token,
       process.env.JWT_SECRET!
     ) as JwtPayload;
+    console.log(role, _id);
     if (role !== "user") return response.sendStatus(403);
     next();
   } catch (error) {
+    console.log(error);
     return response.sendStatus(403);
   }
 };
