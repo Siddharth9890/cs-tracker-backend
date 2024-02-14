@@ -5,13 +5,14 @@ import { TopicUnderSubject } from "./TopicUnderSubject";
 import User from "./User";
 
 interface RevisionAttributes {
-  revision_id: string;
-  question_name: string;
-  question_topic: string;
-  is_completed: boolean;
-  completion_date: Date;
-  revision_date: Date;
-  submitted_by: string;
+  id: number;
+  questionId: number;
+  topicId: number;
+  isCompleted: boolean;
+  completionDate: Date;
+  revisionDate: Date;
+  submittedBy: number;
+  revised: boolean;
 }
 
 export interface RevisionInput extends Required<RevisionAttributes> {}
@@ -21,56 +22,58 @@ export class Revision
   extends Model<RevisionAttributes, RevisionInput>
   implements RevisionOutput
 {
-  public revision_id!: string;
-  public question_name!: string;
-  public revision_date!: Date;
-  public submitted_by!: string;
-  public question_topic!: string;
-  public is_completed!: boolean;
-  public completion_date!: Date;
+  public id!: number;
+  public questionId!: number;
+  public revisionDate!: Date;
+  public submittedBy!: number;
+  public topicId!: number;
+  public isCompleted!: boolean;
+  public completionDate!: Date;
+  public revised!: boolean;
 }
 
 Revision.init(
   {
-    revision_id: {
-      type: DataTypes.UUID,
+    id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: DataTypes.INTEGER,
       primaryKey: true,
       unique: true,
     },
-    question_name: {
-      type: DataTypes.STRING(50),
+    questionId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
 
       references: {
         model: Question,
-        key: "question_name",
+        key: "id",
       },
     },
-    question_topic: {
-      type: DataTypes.STRING(50),
+    topicId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: TopicUnderSubject,
-        key: "topic_name",
+        key: "id",
       },
     },
-    is_completed: {
+    isCompleted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
-    completion_date: { type: DataTypes.DATE, allowNull: false },
-    revision_date: { type: DataTypes.DATE, allowNull: false },
-    submitted_by: {
-      type: DataTypes.STRING(50),
+    completionDate: { type: DataTypes.DATE, allowNull: false },
+    revisionDate: { type: DataTypes.DATE, allowNull: false },
+    submittedBy: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: User,
-        key: "email",
+        key: "id",
       },
     },
+    revised: { type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false },
   },
   {
     timestamps: false,
