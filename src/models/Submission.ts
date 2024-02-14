@@ -5,12 +5,12 @@ import { TopicUnderSubject } from "./TopicUnderSubject";
 import User from "./User";
 
 interface SubmissionAttributes {
-  submission_id: string;
-  question_name: string;
-  question_topic: string;
-  is_completed: boolean;
-  completion_date: Date;
-  submitted_by: string;
+  id: number;
+  questionId: number;
+  topicId: number;
+  isCompleted: boolean;
+  completionDate: Date;
+  submittedBy: number;
   notes: string;
 }
 
@@ -20,53 +20,53 @@ export class Submission
   extends Model<SubmissionAttributes, SubmissionInput>
   implements SubmissionOutput
 {
-  public submission_id!: string;
-  public question_name!: string;
-  public question_topic!: string;
-  public is_completed!: boolean;
-  public completion_date!: Date;
-  public submitted_by!: string;
+  public id!: number;
+  public questionId!: number;
+  public topicId!: number;
+  public isCompleted!: boolean;
+  public completionDate!: Date;
+  public submittedBy!: number;
   public notes!: string;
 }
 
 Submission.init(
   {
-    submission_id: {
-      type: DataTypes.UUID,
+    id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: DataTypes.INTEGER,
       unique: true,
     },
-    question_name: {
-      type: DataTypes.STRING(50),
+    questionId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
 
       references: {
         model: Question,
-        key: "question_name",
+        key: "id",
       },
     },
-    question_topic: {
-      type: DataTypes.STRING(50),
+    topicId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: TopicUnderSubject,
-        key: "topic_name",
+        key: "id",
       },
     },
-    is_completed: {
+    isCompleted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
-    completion_date: { type: DataTypes.DATE, allowNull: false },
-    submitted_by: {
-      type: DataTypes.STRING(50),
+    completionDate: { type: DataTypes.DATE, defaultValue: DataTypes.DATE },
+    submittedBy: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: User,
-        key: "email",
+        key: "id",
       },
     },
     notes: {

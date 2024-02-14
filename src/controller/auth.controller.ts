@@ -1,12 +1,10 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
-import { customAlphabet } from "nanoid";
 
 import { errorResponse, successResponse } from "../utils/response.utils";
 import {
   createUserDal,
-  deleteUserByIdDal,
   getUserByEmailDal,
   getUserByRefreshTokenDal,
   updateUserDal,
@@ -17,20 +15,19 @@ import { UserOutput } from "../models/User";
 
 dotenv.config();
 
-const nanoid = customAlphabet("0123456789", 6);
-
 export async function createUser(request: Request, response: Response) {
   let payload = request.body;
   try {
     let user = await createUserDal(payload);
-
+    await sendEmail(user);
     const detailsToSend = {
       email: user.email,
-      multi_factor_enabled: user.multi_factor_enabled,
-      verified: user.verified,
+      verified: false,
+      codeSend: true,
     };
     return successResponse(response, 201, { detailsToSend });
   } catch (error: any) {
+    console.log(error);
     const message = "Something went wrong please try again";
     return errorResponse(response, 500, message);
   }
@@ -40,11 +37,16 @@ async function login(request: Request, response: Response) {
   const { email } = request.body;
   try {
     let user = await getUserByEmailDal(email);
+    if (user.accountStatus !== "active")
+      return successResponse(response, 400, {
+        message: "You account is not active contact support",
+      });
+    await sendEmail(user);
 
     const detailsToSend = {
       email: user.email,
-      multi_factor_enabled: user.multi_factor_enabled,
       verified: user.verified,
+      codeSend: true,
     };
     return successResponse(response, 200, { detailsToSend });
   } catch (error) {
@@ -58,9 +60,9 @@ async function getUserAndGenerateTokens(request: Request, response: Response) {
     let user = await getUserByEmailDal(email);
     const { accessToken, refreshToken } = generateTokens(user);
     console.log(accessToken, refreshToken);
-    user.refresh_token = refreshToken;
-    user = await updateUserDal(user.user_id, user);
-    user.refresh_token = "";
+    user.refreshToken = refreshToken;
+    user = await updateUserDal(user.id, user);
+    user.refreshToken = "";
     const date = new Date();
     date.setDate(date.getDate() + parseInt(process.env.COOKIE_MAX_AGE!));
     response.cookie("jwt", refreshToken, {
@@ -82,34 +84,27 @@ async function updateUser(request: Request, response: Response) {
   try {
     const refreshToken = cookies.jwt;
     if (refreshToken.length !== 187) return response.sendStatus(401);
-    if (!user.verified || !user.multi_factor_enabled) {
-      return successResponse(
-        response,
-        200,
-        "Account is not verified or mfa is not enabled"
-      );
+    if (!user.verified) {
+      return successResponse(response, 200, {
+        message: "Account is not verified!",
+      });
     }
-    await updateUserDal(user.user_id, user);
+    await updateUserDal(user.id, user);
     return successResponse(response, 201, { user });
   } catch (error) {
     return errorResponse(response, 500, error);
   }
 }
 
-async function sendEmail(request: Request, response: Response) {
-  const { email } = request.body;
+async function sendEmail(user: UserOutput) {
   try {
-    const user = await getUserByEmailDal(email);
+    const otp = Math.floor(100000 + Math.random() * 900000);
 
-    if (user.verified) {
-      return successResponse(response, 200, "Account is already verified");
-    }
-
-    const otp = nanoid();
-    await sendMail(user.user_name, email, otp);
-    return successResponse(response, 201, { otp });
+    await sendMail(user.userName, user.email, otp);
+    user.verificationCode = otp;
+    await updateUserDal(user.id, user);
   } catch (error) {
-    return errorResponse(response, 500, error);
+    console.log(error);
   }
 }
 
@@ -119,19 +114,24 @@ async function verifyAndValidateUser(request: Request, response: Response) {
   try {
     const user = await getUserByEmailDal(email);
 
-    if (user.verified) {
-      return successResponse(response, 200, "Account is already verified");
-    }
+    if (user.accountStatus !== "active")
+      return successResponse(response, 400, {
+        message: "You account is not active contact support",
+      });
+
+    if (user.verificationCode !== otp)
+      return successResponse(response, 400, {
+        message: "Otp entered is incorrect",
+      });
 
     user.verified = true;
-    await updateUserDal(user.user_id, user);
-    return successResponse(response, 200, "Account is verified");
+    user.verificationCode = 0;
+    await updateUserDal(user.id, user);
+    return successResponse(response, 200, { verified: true });
   } catch (error) {
-    return errorResponse(
-      response,
-      500,
-      "Something went wrong please try again or contact support"
-    );
+    return errorResponse(response, 500, {
+      message: "Something went wrong please try again or contact support",
+    });
   }
 }
 
@@ -150,8 +150,8 @@ async function logout(request: Request, response: Response) {
       return response.sendStatus(400);
     }
 
-    user.refresh_token = "";
-    await updateUserDal(user.user_id, user);
+    user.refreshToken = "";
+    await updateUserDal(user.id, user);
     response.clearCookie("jwt", { httpOnly: true });
     return response.sendStatus(204);
   } catch (error) {
@@ -170,12 +170,10 @@ async function handleRefreshToken(request: Request, response: Response) {
     let user = await getUserByRefreshTokenDal(refreshToken);
     if (!user) return response.sendStatus(403);
 
-    if (user.account_status !== "active")
-      return successResponse(
-        response,
-        400,
-        "You account is not active contact support"
-      );
+    if (user.accountStatus !== "active")
+      return successResponse(response, 400, {
+        message: "You account is not active contact support",
+      });
     jwt.verify(refreshToken, process.env.JWT_SECRET!);
 
     const { accessToken } = generateTokens(user);
@@ -196,36 +194,14 @@ async function getUserRefreshToken(request: Request, response: Response) {
     let user = await getUserByRefreshTokenDal(refreshToken);
     if (!user) return response.sendStatus(404);
 
-    if (user.account_status !== "active")
-      return successResponse(
-        response,
-        400,
-        "You account is not active contact support"
-      );
-    user.refresh_token = "";
+    if (user.accountStatus !== "active")
+      return successResponse(response, 400, {
+        message: "You account is not active contact support",
+      });
+    user.refreshToken = "";
     return response.json({ user });
   } catch (error) {
     console.log(error);
-    return response.sendStatus(500);
-  }
-}
-
-async function deleteAccount(request: Request, response: Response) {
-  const cookies = request.cookies;
-  if (!cookies?.jwt) return response.sendStatus(204);
-
-  try {
-    const refreshToken: string = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
-
-    let user = await getUserByRefreshTokenDal(refreshToken);
-    if (!user) return response.sendStatus(404);
-
-    await deleteUserByIdDal(user.user_id);
-    user.account_status = "deleted";
-    await updateUserDal(user.user_id, user);
-    return response.json({ deleted: "true" });
-  } catch (error) {
     return response.sendStatus(500);
   }
 }
@@ -238,7 +214,6 @@ export default {
   sendEmail,
   verifyAndValidateUser,
   getUserRefreshToken,
-  deleteAccount,
   getUserAndGenerateTokens,
   updateUser,
 };

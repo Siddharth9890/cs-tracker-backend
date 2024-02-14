@@ -3,7 +3,7 @@ import User from "../models/User";
 
 export const createUserSchema = object({
   body: object({
-    user_name: string({
+    userName: string({
       required_error: "Name is required",
     })
       .nonempty({ message: "name  can't be empty" })
@@ -12,7 +12,15 @@ export const createUserSchema = object({
       .trim()
       .regex(/^[a-z0-9]+$/i, {
         message: "Name should have only A-Z/a-z and 0-9 numbers characters",
-      }),
+      })
+      .refine(
+        async (userName) => {
+          const user = await User.findOne({ where: { userName } });
+          if (!user) return true;
+          else return false;
+        },
+        { message: "The entered email is already registered with us" }
+      ),
 
     email: string({ required_error: "Email is required" })
       .nonempty({ message: "email can't be empty" })
@@ -28,34 +36,6 @@ export const createUserSchema = object({
         },
         { message: "The entered email is already registered with us" }
       ),
-  }),
-});
-
-export const tokenSchema = object({
-  body: object({
-    token: string({
-      required_error: "token is required",
-    })
-      .nonempty({ message: "token  can't be empty" })
-      .trim()
-      .length(6, "Token length should be only 6")
-      .regex(/[0-9]/, {
-        message: "token should have only 0-9 numbers as characters",
-      }),
-  }),
-});
-
-export const backupSchema = object({
-  body: object({
-    backup: string({
-      required_error: "backup is required",
-    })
-      .nonempty({ message: "backup  can't be empty" })
-      .trim()
-      .length(20, "backup length should be only 20")
-      .regex(/^[a-z0-9]+$/i, {
-        message: "Name should have only A-Z/a-z and 0-9 numbers characters",
-      }),
   }),
 });
 
@@ -82,7 +62,7 @@ export const emailSchema = object({
         async (email) => {
           const user = await User.findOne({ where: { email } });
           if (!user) return false;
-          else return user.account_status === "active";
+          else return user.accountStatus === "active";
         },
         { message: "You account is not active.Please contact support" }
       ),
@@ -112,7 +92,7 @@ export const otpSchema = object({
         async (email) => {
           const user = await User.findOne({ where: { email } });
           if (!user) return false;
-          else return user.account_status === "active";
+          else return user.accountStatus === "active";
         },
         { message: "You account is not active.Please contact support" }
       ),
@@ -149,7 +129,7 @@ export const updateSchema = object({
         async (email) => {
           const user = await User.findOne({ where: { email } });
           if (!user) return false;
-          else return user.account_status === "active";
+          else return user.accountStatus === "active";
         },
         { message: "You account is not active.Please contact support" }
       ),

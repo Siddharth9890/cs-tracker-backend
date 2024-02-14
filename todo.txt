@@ -1,4 +1,9 @@
-fix the frontend ui and auth 
+change all models add id instead of uuid 
+work on all controllers aas models have changed
+do stronger validation
+postman collection
+check any missing todos
+
 add sheets like 450 one stored locally if not logged in
 cookie management on brave
 admin panel on same frontend 

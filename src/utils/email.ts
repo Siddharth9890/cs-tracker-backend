@@ -2,11 +2,11 @@ import dotenv from "dotenv";
 dotenv.config();
 const Mailjet = require("node-mailjet");
 const mailjet = new Mailjet({
-  apiKey: process.env.SMTP_API_KEY || "your-api-key",
-  apiSecret: process.env.SMTP_SECRET_KEY || "your-api-secret",
+  apiKey: process.env.SMTP_API_KEY!,
+  apiSecret: process.env.SMTP_SECRET_KEY!,
 });
 
-export const sendMail = async (name: string, email: string, otp: string) => {
+export const sendMail = async (name: string, email: string, otp: number) => {
   try {
     await mailjet.post("send", { version: "v3.1" }).request({
       Messages: [
@@ -31,6 +31,7 @@ export const sendMail = async (name: string, email: string, otp: string) => {
       ],
     });
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

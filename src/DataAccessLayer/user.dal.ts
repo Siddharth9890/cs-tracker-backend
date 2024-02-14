@@ -7,7 +7,7 @@ export const createUserDal = async (
 };
 
 export const updateUserDal = async (
-  id: string,
+  id: number,
   payload: Partial<UserInput>
 ): Promise<UserOutput> => {
   const user = await User.findByPk(id);
@@ -15,17 +15,14 @@ export const updateUserDal = async (
 
   const updatedUser = user.set({
     email: payload.email,
-    multi_factor_enabled: payload.multi_factor_enabled,
-    account_status: payload.account_status,
-    user_name: payload.user_name,
-    refresh_token: payload.refresh_token,
+    accountStatus: payload.accountStatus,
+    userName: payload.userName,
+    refreshToken: payload.refreshToken,
     role: payload.role,
     ip: payload.ip,
-    total_number_of_questions_done_by_user:
-      payload.total_number_of_questions_done_by_user,
-    secret: payload.secret,
-    secret_backup: payload.secret_backup,
+    totalNumberQuestionsSolved: payload.totalNumberQuestionsSolved,
     verified: payload.verified,
+    verificationCode: payload.verificationCode,
   });
   await updatedUser.save();
   return updatedUser;
@@ -40,7 +37,7 @@ export const getUserByEmailDal = async (email: string): Promise<UserOutput> => {
 export const getUserByRefreshTokenDal = async (
   refreshToken: string
 ): Promise<UserOutput> => {
-  const user = await User.findOne({ where: { refresh_token: refreshToken } });
+  const user = await User.findOne({ where: { refreshToken: refreshToken } });
   if (!user) throw "User not found";
   return user;
 };
@@ -52,5 +49,5 @@ export const getUserByIdDal = async (id: string): Promise<UserOutput> => {
 };
 
 export const deleteUserByIdDal = async (id: string) => {
-  return await User.destroy({ where: { user_id: id } });
+  return await User.destroy({ where: { id: id } });
 };

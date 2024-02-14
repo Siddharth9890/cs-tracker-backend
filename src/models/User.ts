@@ -2,17 +2,15 @@ import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../../db";
 
 export interface UserAttributes {
-  user_id: string;
-  user_name: string;
+  id: number;
+  userName: string;
   email: string;
-  refresh_token: string;
-  secret: string;
-  secret_backup: string;
-  multi_factor_enabled: boolean;
+  refreshToken: string;
+  verificationCode: number;
   role: string;
-  total_number_of_questions_done_by_user: number;
+  totalNumberQuestionsSolved: number;
   ip: string;
-  account_status: string;
+  accountStatus: string;
   verified: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,28 +20,21 @@ export interface UserAttributes {
 export interface UserInput
   extends Optional<
     UserAttributes,
-    | "user_id"
-    | "refresh_token"
-    | "secret"
-    | "secret_backup"
-    | "multi_factor_enabled"
-    | "ip"
+    "id" | "refreshToken" | "verificationCode" | "ip"
   > {}
 export interface UserOutput extends Required<UserAttributes> {}
 
 class User extends Model<UserAttributes, UserInput> implements UserAttributes {
-  public user_id!: string;
-  public user_name!: string;
+  public id!: number;
+  public userName!: string;
   public email!: string;
-  public refresh_token!: string;
-  public secret!: string;
-  public secret_backup!: string;
-  public multi_factor_enabled!: boolean;
+  public refreshToken!: string;
+  public verificationCode!: number;
   public role!: string;
-  public total_number_of_questions_done_by_user!: number;
+  public totalNumberQuestionsSolved!: number;
   public ip!: string;
   public verified!: boolean;
-  public account_status!: string;
+  public accountStatus!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
   public readonly deletedAt!: Date;
@@ -51,31 +42,31 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
 
 User.init(
   {
-    user_id: {
-      type: DataTypes.UUID,
+    id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
+      autoIncrement: true,
       unique: true,
       primaryKey: true,
     },
-    user_name: {
+    userName: {
       type: DataTypes.STRING(20),
       allowNull: false,
       validate: {
         min: {
           args: [5],
-          msg: "Name should be greater than 5 characters",
+          msg: "User Name should be greater than 5 characters",
         },
         max: {
           args: [20],
-          msg: "Name should be less than 20 characters",
+          msg: "User Name should be less than 20 characters",
         },
+        isAlphanumeric: false,
       },
     },
     email: {
       type: DataTypes.STRING(30),
       allowNull: false,
-      unique: true,
       validate: {
         isEmail: true,
         min: {
@@ -88,13 +79,9 @@ User.init(
         },
       },
     },
-    refresh_token: { type: DataTypes.STRING(187) },
-    secret: { type: DataTypes.STRING(52) },
-    secret_backup: { type: DataTypes.STRING(50) },
-    multi_factor_enabled: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
+    refreshToken: { type: DataTypes.STRING(187) },
+    verificationCode: { type: DataTypes.INTEGER },
+
     verified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -104,13 +91,13 @@ User.init(
       values: ["user", "admin", "moderator"],
       defaultValue: "user",
     },
-    account_status: {
+    accountStatus: {
       type: DataTypes.ENUM,
       values: ["active", "disabled", "deleted"],
       defaultValue: "active",
     },
     ip: { type: DataTypes.STRING },
-    total_number_of_questions_done_by_user: {
+    totalNumberQuestionsSolved: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
@@ -123,6 +110,10 @@ User.init(
       {
         unique: true,
         fields: ["email"],
+      },
+      {
+        unique: true,
+        fields: ["userName"],
       },
     ],
   }

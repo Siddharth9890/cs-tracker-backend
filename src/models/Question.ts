@@ -3,50 +3,47 @@ import { sequelize } from "../../db";
 import { TopicUnderSubject } from "./TopicUnderSubject";
 
 interface QuestionAttributes {
-  question_id: string;
-  question_name: string;
-  question_description: string;
-  how_many_times_solved: number;
+  id: number;
+  name: string;
+  description: string;
+  howManyTimesSolved: number;
   difficulty: string;
-  youtube_video_link: string;
-  leet_code_problem_link: string;
-  under_which_topic: string;
+  videoLink: string;
+  problemLink: string;
+  underWhichTopic: string;
 }
 
 export interface QuestionInput
-  extends Optional<
-    QuestionAttributes,
-    "question_id" | "how_many_times_solved"
-  > {}
+  extends Optional<QuestionAttributes, "id" | "howManyTimesSolved"> {}
 export interface QuestionOutput extends Required<QuestionAttributes> {}
 
 export class Question
   extends Model<QuestionAttributes, QuestionInput>
   implements QuestionAttributes
 {
-  public question_id!: string;
-  public question_name!: string;
-  public question_description!: string;
-  public how_many_times_solved!: number;
+  public id!: number;
+  public name!: string;
+  public description!: string;
+  public howManyTimesSolved!: number;
   public difficulty!: string;
-  public youtube_video_link!: string;
-  public leet_code_problem_link!: string;
-  public under_which_topic!: string;
+  public videoLink!: string;
+  public problemLink!: string;
+  public underWhichTopic!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
 Question.init(
   {
-    question_id: {
-      type: DataTypes.UUID,
+    id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: DataTypes.INTEGER,
       primaryKey: true,
       unique: true,
     },
-    question_name: {
-      type: DataTypes.STRING(30),
+    name: {
+      type: DataTypes.STRING(500),
       allowNull: false,
       unique: true,
       validate: {
@@ -55,13 +52,13 @@ Question.init(
           msg: "question name should be greater than 5 characters",
         },
         max: {
-          args: [30],
-          msg: "question name should be less than 30 characters",
+          args: [500],
+          msg: "question name should be less than 500 characters",
         },
       },
     },
-    question_description: {
-      type: DataTypes.STRING(100),
+    description: {
+      type: DataTypes.STRING(1000),
       allowNull: false,
       validate: {
         min: {
@@ -69,18 +66,18 @@ Question.init(
           msg: "question description should be greater than 5 characters",
         },
         max: {
-          args: [100],
-          msg: "question description should be less than 100 characters",
+          args: [1000],
+          msg: "question description should be less than 1000 characters",
         },
       },
     },
-    how_many_times_solved: { type: DataTypes.INTEGER, defaultValue: 0 },
+    howManyTimesSolved: { type: DataTypes.INTEGER, defaultValue: 0 },
     difficulty: {
       type: DataTypes.ENUM,
       allowNull: false,
       values: ["easy", "medium", "hard"],
     },
-    youtube_video_link: {
+    videoLink: {
       type: DataTypes.STRING(50),
       allowNull: false,
       unique: true,
@@ -88,12 +85,9 @@ Question.init(
         isUrl: {
           msg: "Enter a valid url",
         },
-        isYoutubeUrl(value: string) {
-          return value.includes("https://www.youtube.com/watch");
-        },
       },
     },
-    leet_code_problem_link: {
+    problemLink: {
       type: DataTypes.STRING(50),
       allowNull: false,
       unique: true,
@@ -101,16 +95,13 @@ Question.init(
         isUrl: {
           msg: "Enter a valid url",
         },
-        isLeetCodeUrl(value: string) {
-          return value.includes("https://leetcode.com/problems");
-        },
       },
     },
-    under_which_topic: {
-      type: DataTypes.STRING(50),
+    underWhichTopic: {
+      type: DataTypes.INTEGER,
       references: {
         model: TopicUnderSubject,
-        key: "topic_name",
+        key: "id",
       },
     },
   },
@@ -120,15 +111,15 @@ Question.init(
     indexes: [
       {
         unique: true,
-        fields: ["question_name"],
+        fields: ["name"],
       },
       {
         unique: true,
-        fields: ["youtube_video_link"],
+        fields: ["videoLink"],
       },
       {
         unique: true,
-        fields: ["leet_code_problem_link"],
+        fields: ["problemLink"],
       },
     ],
   }

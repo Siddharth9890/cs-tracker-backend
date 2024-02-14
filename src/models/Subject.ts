@@ -1,50 +1,47 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../../db";
 
-// subject like dsa,web
-
 interface SubjectsAttributes {
-  subject_id: string;
-  subject_name: string;
-  subject_description: string;
-  image_url: string;
-  topic_count: number;
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  topicCount: number;
 }
 
-export interface SubjectInput
-  extends Optional<SubjectsAttributes, "subject_id"> {}
+export interface SubjectInput extends Optional<SubjectsAttributes, "id"> {}
 export interface SubjectOutput extends Required<SubjectsAttributes> {}
 
 export class Subject
   extends Model<SubjectsAttributes, SubjectInput>
   implements SubjectOutput
 {
-  public subject_id!: string;
-  public subject_name!: string;
-  public subject_description!: string;
-  public image_url!: string;
-  public topic_count!: number;
+  public id!: number;
+  public name!: string;
+  public description!: string;
+  public imageUrl!: string;
+  public topicCount!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
 Subject.init(
   {
-    subject_id: {
-      type: DataTypes.UUID,
+    id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
+      defaultValue: DataTypes.INTEGER,
       unique: true,
       primaryKey: true,
     },
-    subject_name: {
+    name: {
       type: DataTypes.STRING(30),
       allowNull: false,
       unique: true,
       validate: {
         min: {
-          args: [5],
-          msg: "Subject name should be greater than 5 characters",
+          args: [3],
+          msg: "Subject name should be greater than 3 characters",
         },
         max: {
           args: [30],
@@ -52,8 +49,8 @@ Subject.init(
         },
       },
     },
-    subject_description: {
-      type: DataTypes.STRING(100),
+    description: {
+      type: DataTypes.STRING(500),
       allowNull: false,
       validate: {
         min: {
@@ -61,12 +58,12 @@ Subject.init(
           msg: "Subject description should be greater than 5 characters",
         },
         max: {
-          args: [100],
-          msg: "Subject description should be less than 50 characters",
+          args: [500],
+          msg: "Subject description should be less than 500 characters",
         },
       },
     },
-    image_url: {
+    imageUrl: {
       type: DataTypes.STRING(200),
       allowNull: false,
       validate: {
@@ -75,7 +72,7 @@ Subject.init(
         },
       },
     },
-    topic_count: {
+    topicCount: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -84,8 +81,8 @@ Subject.init(
           msg: "topic Count should be greater than 0",
         },
         max: {
-          args: [100],
-          msg: "topic count  should be less than 100",
+          args: [1000],
+          msg: "topic count  should be less than 1000",
         },
       },
     },
@@ -96,7 +93,7 @@ Subject.init(
     indexes: [
       {
         unique: true,
-        fields: ["subject_name"],
+        fields: ["name"],
       },
     ],
   }
