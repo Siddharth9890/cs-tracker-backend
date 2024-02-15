@@ -7,19 +7,19 @@ export const createSubjectDal = async (
 };
 
 export const updateSubjectDal = async (
-  subjectName: string,
+  subjectId: string,
   payload: Partial<SubjectInput>
 ): Promise<SubjectOutput> => {
   const subject = await Subject.findOne({
-    where: { subject_name: subjectName },
+    where: { id: subjectId },
   });
   if (!subject) throw "Subject not found";
 
   const updatedSubject = subject.set({
-    subject_description: payload.subject_description,
-    image_url: payload.image_url,
-    subject_name: payload.subject_name,
-    topic_count: payload.topic_count,
+    description: payload.description,
+    imageUrl: payload.imageUrl,
+    name: payload.name,
+    topicCount: payload.topicCount,
   });
   await updatedSubject.save();
   return updatedSubject;
@@ -29,16 +29,14 @@ export const getAllSubjectsDal = async (): Promise<SubjectOutput[]> => {
   return await Subject.findAll({ limit: 20 });
 };
 
-export const getSubjectByNameDal = async (
-  subjectName: string
+export const getSubjectByIdDal = async (
+  subjectId: number
 ): Promise<SubjectOutput> => {
-  const subject = await Subject.findOne({
-    where: { subject_name: subjectName },
-  });
+  const subject = await Subject.findByPk(subjectId);
   if (!subject) throw "Subject not found";
   return subject;
 };
 
-export const deleteSubjectByNameDal = async (name: string) => {
-  return await Subject.destroy({ where: { subject_name: name } });
+export const deleteSubjectByIdDal = async (subjectId: string) => {
+  return await Subject.destroy({ where: { id: subjectId } });
 };

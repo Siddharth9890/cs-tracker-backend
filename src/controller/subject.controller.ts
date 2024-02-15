@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import {
   createSubjectDal,
-  deleteSubjectByNameDal,
+  deleteSubjectByIdDal,
   getAllSubjectsDal,
-  getSubjectByNameDal,
+  getSubjectByIdDal,
   updateSubjectDal,
 } from "../DataAccessLayer/subject.dal";
 
@@ -15,17 +15,21 @@ async function createSubject(request: Request, response: Response) {
     const subject = await createSubjectDal(body);
     return successResponse(response, 201, subject);
   } catch (error) {
+    console.log(error);
     return errorResponse(response, 500, error);
   }
 }
 
 async function updateSubject(request: Request, response: Response) {
-  const subjectName = request.params.subjectName;
   const body = request.body;
   try {
-    const subject = await updateSubjectDal(subjectName, body);
+    const subject = await updateSubjectDal(
+      body.subjectId as string,
+      body
+    );
     return successResponse(response, 201, subject);
   } catch (error: any) {
+    console.log(error);
     return errorResponse(response, 500, error);
   }
 }
@@ -35,14 +39,15 @@ async function getAllSubject(request: Request, response: Response) {
     const subjects = await getAllSubjectsDal();
     return successResponse(response, 200, subjects);
   } catch (error) {
+    console.log(error);
     return errorResponse(response, 500, error);
   }
 }
 
-async function getSubjectByName(request: Request, response: Response) {
-  const subjectName = request.params.subjectName;
+async function getSubjectById(request: Request, response: Response) {
+  const subjectId = request.query.subjectId;
   try {
-    const result = await getSubjectByNameDal(subjectName);
+    const result = await getSubjectByIdDal(parseInt(subjectId as string));
     return successResponse(response, 200, result);
   } catch (error) {
     errorResponse(response, 500, error);
@@ -50,11 +55,12 @@ async function getSubjectByName(request: Request, response: Response) {
 }
 
 async function deleteSubjectByName(request: Request, response: Response) {
-  const subjectName = request.params.subjectName;
+  const body = request.body;
   try {
-    await deleteSubjectByNameDal(subjectName);
-    return successResponse(response, 200, "Deleted successfully");
+    await deleteSubjectByIdDal(body.subjectId as string);
+    return successResponse(response, 200, { deleted: body.subjectId });
   } catch (error) {
+    console.log(error);
     errorResponse(response, 500, error);
   }
 }
@@ -63,6 +69,6 @@ export default {
   createSubject,
   getAllSubject,
   deleteSubjectByName,
-  getSubjectByName,
+  getSubjectById,
   updateSubject,
 };

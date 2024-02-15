@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import {
   createQuestionDal,
-  deleteQuestionByNameDal,
-  getQuestionByNameDal,
+  deleteQuestionByIdDal,
+  getQuestionByIdDal,
   getQuestionsUnderTopicDal,
   updateQuestionDal,
 } from "../DataAccessLayer/question.dal";
@@ -20,9 +20,11 @@ async function createQuestion(request: Request, response: Response) {
 
 async function updateQuestion(request: Request, response: Response) {
   const body = request.body;
-  const questionName = request.params.questionName;
   try {
-    const updatedQuestion = await updateQuestionDal(questionName, body);
+    const updatedQuestion = await updateQuestionDal(
+      parseInt(body.questionId as string),
+      body
+    );
     successResponse(response, 201, updatedQuestion);
   } catch (error) {
     return errorResponse(response, 500, error);
@@ -30,19 +32,21 @@ async function updateQuestion(request: Request, response: Response) {
 }
 
 async function getQuestionsUnderATopic(request: Request, response: Response) {
-  const topicName = request.params.topicName;
+  const topicId = request.query.topicId;
   try {
-    const questions = await getQuestionsUnderTopicDal(topicName);
+    const questions = await getQuestionsUnderTopicDal(
+      parseInt(topicId as string)
+    );
     successResponse(response, 200, questions);
   } catch (error) {
     errorResponse(response, 500, error);
   }
 }
 
-async function getQuestionByName(request: Request, response: Response) {
-  const questionName = request.params.questionName;
+async function getQuestionById(request: Request, response: Response) {
+  const questionId = request.query.questionId;
   try {
-    const question = await getQuestionByNameDal(questionName);
+    const question = await getQuestionByIdDal(parseInt(questionId as string));
     successResponse(response, 200, question);
   } catch (error) {
     errorResponse(response, 500, error);
@@ -50,10 +54,10 @@ async function getQuestionByName(request: Request, response: Response) {
 }
 
 async function deleteQuestion(request: Request, response: Response) {
-  const questionName = request.params.questionName;
+  const questionId = request.body.questionId;
   try {
-    await deleteQuestionByNameDal(questionName);
-    successResponse(response, 200, "Deleted successfully");
+    await deleteQuestionByIdDal(parseInt(questionId as string));
+    successResponse(response, 200, { deleted: questionId });
   } catch (error) {
     errorResponse(response, 500, error);
   }
@@ -62,7 +66,7 @@ async function deleteQuestion(request: Request, response: Response) {
 export default {
   createQuestion,
   deleteQuestion,
-  getQuestionByName,
+  getQuestionById,
   getQuestionsUnderATopic,
   updateQuestion,
 };

@@ -38,7 +38,7 @@ Question.init(
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
       unique: true,
     },

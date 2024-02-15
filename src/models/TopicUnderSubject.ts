@@ -7,7 +7,7 @@ interface TopicUnderSubjectAttributes {
   name: string;
   description: string;
   questionCount: number;
-  underWhichSubject: string;
+  underWhichSubject: number;
 }
 
 export interface TopicUnderSubjectInput
@@ -24,7 +24,7 @@ export class TopicUnderSubject
   public name!: string;
   public description!: string;
   public questionCount!: number;
-  public underWhichSubject!: string;
+  public underWhichSubject!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import {
   createTopicUnderSubjectDal,
-  deleteTopicByNameDal,
+  deleteTopicByIdDal,
   getAllTopicsUnderSubjectDal,
   getTopicByNameDal,
   updateTopicUnderSubjectDal,
@@ -21,9 +21,11 @@ async function createTopic(request: Request, response: Response) {
 
 async function updateTopic(request: Request, response: Response) {
   const body = request.body;
-  const topicName = request.params.topicName;
   try {
-    const updatedTopic = await updateTopicUnderSubjectDal(topicName, body);
+    const updatedTopic = await updateTopicUnderSubjectDal(
+      parseInt(body.topicId as string),
+      body
+    );
     successResponse(response, 200, updatedTopic);
   } catch (error) {
     return errorResponse(response, 500, error);
@@ -31,19 +33,21 @@ async function updateTopic(request: Request, response: Response) {
 }
 
 async function getAllTopicsUnderSubject(request: Request, response: Response) {
-  const subjectName = request.params.subjectName;
+  const subjectId = request.query.subjectId;
   try {
-    const topics = await getAllTopicsUnderSubjectDal(subjectName);
+    const topics = await getAllTopicsUnderSubjectDal(
+      parseInt(subjectId as string)
+    );
     successResponse(response, 200, topics);
   } catch (error) {
     errorResponse(response, 500, error);
   }
 }
 
-async function getTopicByName(request: Request, response: Response) {
-  const topicName = request.params.topicName;
+async function getTopicById(request: Request, response: Response) {
+  const topicId = request.query.topicId;
   try {
-    const topic = await getTopicByNameDal(topicName);
+    const topic = await getTopicByNameDal(parseInt(topicId as string));
     successResponse(response, 200, topic);
   } catch (error) {
     errorResponse(response, 500, error);
@@ -51,10 +55,10 @@ async function getTopicByName(request: Request, response: Response) {
 }
 
 async function deleteTopic(request: Request, response: Response) {
-  const topicName = request.params.topicName;
+  const body = request.body;
   try {
-    await deleteTopicByNameDal(topicName);
-    successResponse(response, 200, "Deleted successfully");
+    await deleteTopicByIdDal(parseInt(body.topicId as string));
+    successResponse(response, 200, { deleted: body.topicId });
   } catch (error) {
     errorResponse(response, 500, error);
   }
@@ -63,7 +67,7 @@ async function deleteTopic(request: Request, response: Response) {
 export default {
   createTopic,
   updateTopic,
-  getTopicByName,
+  getTopicById,
   deleteTopic,
   getAllTopicsUnderSubject,
 };
