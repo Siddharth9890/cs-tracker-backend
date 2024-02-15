@@ -30,7 +30,7 @@ Subject.init(
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: DataTypes.INTEGER,
+      autoIncrement: true,
       unique: true,
       primaryKey: true,
     },

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
   createSubjectDal,
-  deleteSubjectByNameDal,
+  deleteSubjectByIdDal,
   getAllSubjectsDal,
   getSubjectByNameDal,
   updateSubjectDal,
@@ -15,17 +15,19 @@ async function createSubject(request: Request, response: Response) {
     const subject = await createSubjectDal(body);
     return successResponse(response, 201, subject);
   } catch (error) {
+    console.log(error);
     return errorResponse(response, 500, error);
   }
 }
 
 async function updateSubject(request: Request, response: Response) {
-  const subjectName = request.params.subjectName;
+  const subjectId = request.params.subjectId;
   const body = request.body;
   try {
-    const subject = await updateSubjectDal(subjectName, body);
+    const subject = await updateSubjectDal(parseInt(subjectId), body);
     return successResponse(response, 201, subject);
   } catch (error: any) {
+    console.log(error);
     return errorResponse(response, 500, error);
   }
 }
@@ -35,6 +37,7 @@ async function getAllSubject(request: Request, response: Response) {
     const subjects = await getAllSubjectsDal();
     return successResponse(response, 200, subjects);
   } catch (error) {
+    console.log(error);
     return errorResponse(response, 500, error);
   }
 }
@@ -50,11 +53,12 @@ async function getSubjectByName(request: Request, response: Response) {
 }
 
 async function deleteSubjectByName(request: Request, response: Response) {
-  const subjectName = request.params.subjectName;
+  const subjectId = request.params.subjectId;
   try {
-    await deleteSubjectByNameDal(subjectName);
-    return successResponse(response, 200, "Deleted successfully");
+    await deleteSubjectByIdDal(parseInt(subjectId));
+    return successResponse(response, 200, { deleted: subjectId });
   } catch (error) {
+    console.log(error);
     errorResponse(response, 500, error);
   }
 }

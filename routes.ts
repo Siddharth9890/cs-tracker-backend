@@ -13,9 +13,9 @@ import revisionRouter from "./src/routes/revision.routes";
 function routes(app: Express): void {
   app.use("/api/v2/auth/", authRouter);
 
-  app.use(verifyJWT);
+  // app.use(verifyJWT);
 
-  // app.use("/api/v2/subject", subjectRouter);
+  app.use("/api/v2/subject", subjectRouter);
 
   // app.use("/api/v2/topic", topicRouter);
 

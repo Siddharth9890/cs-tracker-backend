@@ -5,8 +5,9 @@ import { validateAsync } from "../middleware/validateResources";
 import verifyAdminPermission from "../middleware/verifyAdminPermission";
 import {
   createSubjectSchema,
-  deleteSubjectSchema,
+  getSubjectByNameSchema,
   updateSubjectSchema,
+  deleteSubjectByIdSchema,
 } from "../schema/subject.schema";
 
 const router = express.Router();
@@ -34,7 +35,7 @@ router.put(
 router.delete(
   "/:subjectName",
   verifyAdminPermission,
-  validateAsync(deleteSubjectSchema),
+  validateAsync(deleteSubjectByIdSchema),
   subjectController.deleteSubjectByName
 );
 
@@ -47,7 +48,7 @@ router.get("/", verifyAdminPermission, subjectController.getAllSubject);
 router.get(
   "/:subjectName",
   verifyAdminPermission,
-  validateAsync(deleteSubjectSchema),
+  validateAsync(getSubjectByNameSchema),
   subjectController.getSubjectByName
 );
 
