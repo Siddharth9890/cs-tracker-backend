@@ -3,6 +3,9 @@ work on all controllers aas models have changed
 do stronger validation
 postman collection
 check any missing todos
+check for deletion if topic has question then cant delete it check dal files
+rename methods some have byid some dont
+
 
 add sheets like 450 one stored locally if not logged in
 cookie management on brave

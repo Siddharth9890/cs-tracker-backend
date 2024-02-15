@@ -7,7 +7,7 @@ export const createSubjectDal = async (
 };
 
 export const updateSubjectDal = async (
-  subjectId: number,
+  subjectId: string,
   payload: Partial<SubjectInput>
 ): Promise<SubjectOutput> => {
   const subject = await Subject.findOne({
@@ -29,16 +29,14 @@ export const getAllSubjectsDal = async (): Promise<SubjectOutput[]> => {
   return await Subject.findAll({ limit: 20 });
 };
 
-export const getSubjectByNameDal = async (
-  subjectName: string
+export const getSubjectByIdDal = async (
+  subjectId: number
 ): Promise<SubjectOutput> => {
-  const subject = await Subject.findOne({
-    where: { name: subjectName },
-  });
+  const subject = await Subject.findByPk(subjectId);
   if (!subject) throw "Subject not found";
   return subject;
 };
 
-export const deleteSubjectByIdDal = async (subjectId: number) => {
+export const deleteSubjectByIdDal = async (subjectId: string) => {
   return await Subject.destroy({ where: { id: subjectId } });
 };

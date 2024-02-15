@@ -34,7 +34,7 @@ async function makeDatabase() {
   await makeConnectionWithDB();
 }
 
-app.use(express.json({ limit: "1kb" }));
+app.use(express.json({ limit: "5kb" }));
 
 routes(app);
 

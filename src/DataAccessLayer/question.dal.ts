@@ -7,47 +7,43 @@ export const createQuestionDal = async (
 };
 
 export const updateQuestionDal = async (
-  questionName: string,
+  questionId: number,
   payload: Partial<QuestionInput>
 ): Promise<QuestionOutput> => {
-  const question = await Question.findOne({
-    where: { question_name: questionName },
-  });
+  const question = await Question.findByPk(questionId);
   if (!question) throw "Question not found";
 
   const updatedQuestion = question.set({
-    question_description: payload.question_description,
+    description: payload.description,
     difficulty: payload.difficulty,
-    leet_code_problem_link: payload.leet_code_problem_link,
-    question_name: payload.question_name,
-    youtube_video_link: payload.youtube_video_link,
-    under_which_topic: payload.under_which_topic,
+    problemLink: payload.problemLink,
+    name: payload.name,
+    videoLink: payload.videoLink,
+    underWhichTopic: payload.underWhichTopic,
   });
   await updatedQuestion.save();
   return updatedQuestion;
 };
 
 export const getQuestionsUnderTopicDal = async (
-  topicName: string
+  topicId: number
 ): Promise<QuestionOutput[]> => {
   const questions = await Question.findAll({
-    where: { under_which_topic: topicName },
+    where: { underWhichTopic: topicId },
     limit: 20,
   });
-  if (questions.length === 0) throw `questions not found for ${topicName}`;
+  if (questions.length === 0) throw `questions not found for ${topicId}`;
   return questions;
 };
 
-export const getQuestionByNameDal = async (
-  questionName: string
+export const getQuestionByIdDal = async (
+  questionId: number
 ): Promise<QuestionOutput> => {
-  const question = await Question.findOne({
-    where: { question_name: questionName },
-  });
+  const question = await Question.findByPk(questionId);
   if (!question) throw "Question not found";
   return question;
 };
 
-export const deleteQuestionByNameDal = async (questionName: string) => {
-  return await Question.destroy({ where: { question_name: questionName } });
+export const deleteQuestionByIdDal = async (questionId: number) => {
+  return await Question.destroy({ where: { id: questionId } });
 };

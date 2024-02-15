@@ -23,7 +23,7 @@ router.post(
 // update a question by name
 // localhost:5000/api/v2/question
 router.put(
-  "/:questionName",
+  "/",
   verifyAdminPermission,
   validateAsync(updateQuestionSchema),
   questionController.updateQuestion
@@ -32,7 +32,7 @@ router.put(
 // delete a question by name
 // localhost:5000/api/v2/question/:questionName
 router.delete(
-  "/:questionName",
+  "/",
   verifyAdminPermission,
   validateAsync(deleteQuestionSchema),
   questionController.deleteQuestion
@@ -41,16 +41,16 @@ router.delete(
 // get a question by name
 // localhost:5000/api/v2/question/:questionName
 router.get(
-  "/:questionName",
+  "/",
   verifyAdminPermission,
   validateAsync(deleteQuestionSchema),
-  questionController.getQuestionByName
+  questionController.getQuestionById
 );
 
 // get all questions under a topic
 // localhost:5000/api/v2/question/topic/:topic
 router.get(
-  "/topic/:topicName",
+  "/topic",
   verifyAdminPermission,
   validateAsync(deleteTopicUnderSubjectSchema),
   questionController.getQuestionsUnderATopic

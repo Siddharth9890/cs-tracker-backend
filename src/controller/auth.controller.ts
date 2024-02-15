@@ -83,7 +83,6 @@ async function updateUser(request: Request, response: Response) {
   if (!cookies?.jwt) return response.sendStatus(204);
   try {
     const refreshToken = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
     if (!user.verified) {
       return successResponse(response, 200, {
         message: "Account is not verified!",
@@ -142,7 +141,6 @@ async function logout(request: Request, response: Response) {
 
   try {
     const refreshToken: string = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
 
     let user = await getUserByRefreshTokenDal(refreshToken);
     if (!user) {
@@ -161,11 +159,12 @@ async function logout(request: Request, response: Response) {
 
 async function handleRefreshToken(request: Request, response: Response) {
   const cookies = request.cookies;
+  console.log(cookies);
   if (!cookies?.jwt) return response.sendStatus(204);
 
   try {
     const refreshToken: string = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
+    console.log(refreshToken.length);
 
     let user = await getUserByRefreshTokenDal(refreshToken);
     if (!user) return response.sendStatus(403);
@@ -189,7 +188,6 @@ async function getUserRefreshToken(request: Request, response: Response) {
 
   try {
     const refreshToken: string = cookies.jwt;
-    if (refreshToken.length !== 187) return response.sendStatus(401);
 
     let user = await getUserByRefreshTokenDal(refreshToken);
     if (!user) return response.sendStatus(404);

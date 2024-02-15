@@ -42,17 +42,16 @@ export const createSubjectSchema = object({
 });
 
 export const updateSubjectSchema = object({
-  params: object({
-    subjectId: number({ required_error: "subjectId is required" }).refine(
+  body: object({
+    subjectId: string({ required_error: "subjectId is required" }).refine(
       async (subjectId) => {
         const subject = await Subject.findByPk(subjectId);
+        console.log(subject);
         if (subject) return true;
         else return false;
       },
       { message: "Subject does not exist" }
     ),
-  }),
-  body: object({
     name: string({ required_error: "subject_name is required" })
       .nonempty({ message: "name can't be empty" })
       .min(5, "subjectName should not be less than 5 characters")
@@ -75,29 +74,22 @@ export const updateSubjectSchema = object({
   }),
 });
 
-export const getSubjectByNameSchema = object({
-  params: object({
-    name: string({ required_error: "subject_name is required" })
-      .nonempty({ message: "name can't be empty" })
-      .min(5, "subjectName should not be less than 5 characters")
-      .max(30, "subjectName should be not be greater than 30 characters")
-      .trim()
-      .refine(
-        async (subjectName) => {
-          const subject = await Subject.findOne({
-            where: { name: subjectName },
-          });
-          if (subject) return true;
-          else return false;
-        },
-        { message: "Subject does not existed" }
-      ),
+export const getSubjectByIdSchema = object({
+  query: object({
+    subjectId: number({ required_error: "subjectId is required" }).refine(
+      async (subjectId) => {
+        const subject = await Subject.findByPk(subjectId);
+        if (subject) return true;
+        else return false;
+      },
+      { message: "Subject does not existed" }
+    ),
   }),
 });
 
 export const deleteSubjectByIdSchema = object({
-  params: object({
-    subjectId: number({ required_error: "subjectId is required" }).refine(
+  body: object({
+    subjectId: string({ required_error: "subjectId is required" }).refine(
       async (subjectId) => {
         const subject = await Subject.findByPk(subjectId);
         if (subject) return true;
