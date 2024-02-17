@@ -5,7 +5,15 @@ export const userIdSchema = object({
   query: object({
     userId: string({ required_error: "userId is required" })
       .nonempty({ message: "userId can't be empty" })
-      .trim(),
+      .trim()
+      .refine(
+        async (userId) => {
+          const user = await User.findByPk(userId);
+          if (user) return true;
+          else return false;
+        },
+        { message: "The user does not exists" }
+      ),
   }),
 });
 
