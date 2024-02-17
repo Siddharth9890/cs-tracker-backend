@@ -47,7 +47,7 @@ async function getAllSubject(request: Request, response: Response) {
 async function getSubjectById(request: Request, response: Response) {
   const subjectId = request.query.subjectId;
   try {
-    const result = await getSubjectByIdDal(parseInt(subjectId as string));
+    const result = await getSubjectByIdDal(subjectId as string);
     return successResponse(response, 200, result);
   } catch (error) {
     errorResponse(response, 500, error);

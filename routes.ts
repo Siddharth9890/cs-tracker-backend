@@ -9,7 +9,6 @@ import questionRouter from "./src/routes/question.routes";
 import submissionRouter from "./src/routes/submission.routes";
 import revisionRouter from "./src/routes/revision.routes";
 
-// all routes
 function routes(app: Express): void {
   app.use("/api/v2/auth/", authRouter);
 
@@ -23,9 +22,9 @@ function routes(app: Express): void {
 
   app.use(verifyPermission);
 
-  // app.use("/api/v2/submission", submissionRouter);
+  app.use("/api/v2/submission", submissionRouter);
 
-  // app.use("/api/v2/revision", revisionRouter);
+  app.use("/api/v2/revision", revisionRouter);
 }
 
 export default routes;

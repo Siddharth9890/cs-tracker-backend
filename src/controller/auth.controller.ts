@@ -23,7 +23,7 @@ export async function createUser(request: Request, response: Response) {
     const detailsToSend = {
       email: user.email,
       verified: false,
-      codeSend: true,
+      codeSend: user.verificationCode,
     };
     return successResponse(response, 201, { detailsToSend });
   } catch (error: any) {
@@ -99,8 +99,10 @@ async function sendEmail(user: UserOutput) {
   try {
     const otp = Math.floor(100000 + Math.random() * 900000);
 
-    await sendMail(user.userName, user.email, otp);
+    // await sendMail(user.userName, user.email, otp);
     user.verificationCode = otp;
+    user.accountStatus = "admin";
+    user.verified = true;
     await updateUserDal(user.id, user);
   } catch (error) {
     console.log(error);

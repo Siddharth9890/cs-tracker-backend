@@ -23,7 +23,7 @@ async function updateTopic(request: Request, response: Response) {
   const body = request.body;
   try {
     const updatedTopic = await updateTopicUnderSubjectDal(
-      parseInt(body.topicId as string),
+      body.topicId as string,
       body
     );
     successResponse(response, 200, updatedTopic);
@@ -36,7 +36,7 @@ async function getAllTopicsUnderSubject(request: Request, response: Response) {
   const subjectId = request.query.subjectId;
   try {
     const topics = await getAllTopicsUnderSubjectDal(
-      parseInt(subjectId as string)
+      subjectId as string
     );
     successResponse(response, 200, topics);
   } catch (error) {
@@ -47,7 +47,7 @@ async function getAllTopicsUnderSubject(request: Request, response: Response) {
 async function getTopicById(request: Request, response: Response) {
   const topicId = request.query.topicId;
   try {
-    const topic = await getTopicByNameDal(parseInt(topicId as string));
+    const topic = await getTopicByNameDal(topicId as string);
     successResponse(response, 200, topic);
   } catch (error) {
     errorResponse(response, 500, error);
@@ -57,7 +57,7 @@ async function getTopicById(request: Request, response: Response) {
 async function deleteTopic(request: Request, response: Response) {
   const body = request.body;
   try {
-    await deleteTopicByIdDal(parseInt(body.topicId as string));
+    await deleteTopicByIdDal(body.topicId as string);
     successResponse(response, 200, { deleted: body.topicId });
   } catch (error) {
     errorResponse(response, 500, error);

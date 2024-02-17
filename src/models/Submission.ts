@@ -35,7 +35,7 @@ Submission.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      defaultValue: DataTypes.INTEGER,
+      autoIncrement: true,
       unique: true,
     },
     questionId: {

@@ -9,123 +9,51 @@ const dateSchema = z.preprocess((arg) => {
 
 export const createSubmissionSchema = object({
   body: object({
-    question_name: string({
-      required_error: "question_name is required",
+    questionId: string({
+      required_error: "questionId is required",
     })
-      .nonempty({ message: "question_name can't be empty" })
-      .min(5, "question_name should not be less than 5 characters")
-      .max(30, "question_name should be not be greater than 30 characters")
-      .trim()
-      .refine(
-        async (questionName) => {
-          const topic = await Question.findOne({
-            where: { question_name: questionName },
-          });
-          if (topic) return true;
-          else return false;
-        },
-        { message: "question_name does not exist" }
-      ),
-    question_topic: string({
-      required_error: "question_topic is required",
+      .nonempty({ message: "questionId can't be empty" })
+      .trim(),
+    topicId: string({
+      required_error: "topicId is required",
     })
-      .nonempty({ message: "question_topic can't be empty" })
-      .min(5, "question_topic should not be less than 5 characters")
-      .max(30, "question_topic should be not be greater than 30 characters")
-      .trim()
-      .refine(
-        async (questionTopic) => {
-          const topic = await TopicUnderSubject.findOne({
-            where: { topic_name: questionTopic },
-          });
-          if (topic) return true;
-          else return false;
-        },
-        { message: "question_topic does not exist" }
-      ),
-
-    completion_date: dateSchema,
-    revision_date: dateSchema.optional(),
-    submitted_by: string({
-      required_error: "submitted_by is required",
+      .nonempty({ message: "topicId can't be empty" })
+      .trim(),
+    completionDate: dateSchema,
+    revisionDate: dateSchema.optional(),
+    submittedBy: string({
+      required_error: "submittedBy is required",
     })
-      .nonempty({ message: "submitted_by can't be empty" })
-      .min(5, "submitted_by should not be less than 5 characters")
-      .max(30, "submitted_by should be not be greater than 30 characters")
-      .trim()
-      .refine(
-        async (email) => {
-          const user = await User.findOne({
-            where: { email },
-          });
-          if (user) return true;
-          else return false;
-        },
-        { message: "User does not exists" }
-      ),
+      .nonempty({ message: "submittedBy can't be empty" })
+      .trim(),
     notes: string().max(500, "notes should not be greater than 500 characters"),
   }),
 });
 
-export const emailSchema = object({
-  params: object({
-    email: string({ required_error: "Email is required" })
-      .nonempty({ message: "email can't be empty" })
-      .email("Not a valid email")
-      .min(5, "email should not be less than 5 characters")
-      .max(50, "email should not be greater than 50 characters")
-      .trim()
-      .refine(
-        async (email) => {
-          const user = await User.findOne({ where: { email } });
-          if (user) return true;
-          else return false;
-        },
-        { message: "The user does not exists" }
-      ),
+export const userIdSchema = object({
+  query: object({
+    userId: string({ required_error: "userId is required" })
+      .nonempty({ message: "userId can't be empty" })
+      .trim(),
   }),
 });
 
-export const emailAndQuestionSchema = object({
-  params: object({
-    email: string({ required_error: "Email is required" })
-      .nonempty({ message: "email can't be empty" })
-      .email("Not a valid email")
-      .min(5, "email should not be less than 5 characters")
-      .max(50, "email should not be greater than 50 characters")
-      .trim()
-      .refine(
-        async (email) => {
-          const user = await User.findOne({ where: { email } });
-          if (user) return true;
-          else return false;
-        },
-        { message: "The user does not exists" }
-      ),
-    question_name: string({
-      required_error: "question_name is required",
+export const userIdAndQuestionIdSchema = object({
+  query: object({
+    userId: string({ required_error: "userId is required" })
+      .nonempty({ message: "emauuserIdserIdil can't be empty" })
+      .trim(),
+    questionId: string({
+      required_error: "questionId is required",
     })
-      .nonempty({ message: "question_name can't be empty" })
-      .min(5, "question_name should not be less than 5 characters")
-      .max(30, "question_name should be not be greater than 30 characters")
-      .trim()
-      .refine(
-        async (questionName) => {
-          const topic = await Question.findOne({
-            where: { question_name: questionName },
-          });
-          if (topic) return true;
-          else return false;
-        },
-        { message: "question_name does not exist" }
-      ),
+      .nonempty({ message: "questionId can't be empty" })
+      .trim(),
   }),
 });
 
 export const idSchema = object({
-  params: object({
+  body: object({
     id: string({ required_error: "id is required" })
-      .uuid({ message: "Should be uuid only" })
       .nonempty({
         message: "id can't be empty",
       }),

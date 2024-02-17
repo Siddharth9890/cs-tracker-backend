@@ -7,9 +7,9 @@ import {
 import { successResponse, errorResponse } from "../utils/response.utils";
 
 async function getAllQuestionsDoneByUser(request: Request, response: Response) {
-  const email = request.params.email;
+  const userId = request.query.userId;
   try {
-    const revisions = await getRevisionsDoneByUserDal(email);
+    const revisions = await getRevisionsDoneByUserDal(userId as string);
     successResponse(response, 200, revisions);
   } catch (error) {
     errorResponse(response, 500, error);
@@ -17,10 +17,10 @@ async function getAllQuestionsDoneByUser(request: Request, response: Response) {
 }
 
 async function removeQuestionFromList(request: Request, response: Response) {
-  const id = request.params.id;
+  const id = request.body.id;
   try {
-    await deleteRevisionByEmailDal(id);
-    successResponse(response, 200, "Successfully deleted");
+    await deleteRevisionByEmailDal(id as string);
+    successResponse(response, 200, { deleted: id });
   } catch (error) {
     errorResponse(response, 500, error);
   }

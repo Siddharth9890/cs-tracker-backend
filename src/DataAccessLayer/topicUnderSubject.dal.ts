@@ -11,7 +11,7 @@ export const createTopicUnderSubjectDal = async (
 };
 
 export const updateTopicUnderSubjectDal = async (
-  topicId: number,
+  topicId: string,
   payload: Partial<TopicUnderSubjectInput>
 ): Promise<TopicUnderSubjectOutput> => {
   const topic = await TopicUnderSubject.findOne({
@@ -30,7 +30,7 @@ export const updateTopicUnderSubjectDal = async (
 };
 
 export const getAllTopicsUnderSubjectDal = async (
-  subjectId: number
+  subjectId: string
 ): Promise<TopicUnderSubjectOutput[]> => {
   const topics = await TopicUnderSubject.findAll({
     where: { underWhichSubject: subjectId },
@@ -41,7 +41,7 @@ export const getAllTopicsUnderSubjectDal = async (
 };
 
 export const getTopicByNameDal = async (
-  topicId: number
+  topicId: string
 ): Promise<TopicUnderSubjectOutput> => {
   const question = await TopicUnderSubject.findOne({
     where: { id: topicId },
@@ -50,6 +50,6 @@ export const getTopicByNameDal = async (
   return question;
 };
 
-export const deleteTopicByIdDal = async (topicId: number) => {
+export const deleteTopicByIdDal = async (topicId: string) => {
   return await TopicUnderSubject.destroy({ where: { id: topicId } });
 };

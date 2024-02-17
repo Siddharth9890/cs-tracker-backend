@@ -30,7 +30,7 @@ export const getAllSubjectsDal = async (): Promise<SubjectOutput[]> => {
 };
 
 export const getSubjectByIdDal = async (
-  subjectId: number
+  subjectId: string
 ): Promise<SubjectOutput> => {
   const subject = await Subject.findByPk(subjectId);
   if (!subject) throw "Subject not found";

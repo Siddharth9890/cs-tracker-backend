@@ -4,9 +4,9 @@ import submissionController from "../controller/submission.controller";
 import { validate, validateAsync } from "../middleware/validateResources";
 import {
   createSubmissionSchema,
-  emailAndQuestionSchema,
-  emailSchema,
   idSchema,
+  userIdAndQuestionIdSchema,
+  userIdSchema,
 } from "../schema/submission.schema";
 
 const router = express.Router();
@@ -22,15 +22,15 @@ router.post(
 // get all submissions under email
 // localhost:5000/api/v1/submission/:email
 router.get(
-  "/:email",
-  validateAsync(emailSchema),
+  "/",
+  validateAsync(userIdSchema),
   submissionController.getAllQuestionsDoneByUser
 );
 
 // get one question done by user
 // localhost:5000/api/v1/submission/question/:id
 router.get(
-  "/question/:id",
+  "/question/",
   validate(idSchema),
   submissionController.getOneQuestionDoneByUser
 );
@@ -38,8 +38,8 @@ router.get(
 // get latest submission of the question done by user
 // localhost:5000/api/v1/submission/:email/:question
 router.get(
-  "/:email/:question_name",
-  validateAsync(emailAndQuestionSchema),
+  "/latest",
+  validateAsync(userIdAndQuestionIdSchema),
   submissionController.getLatestSubmission
 );
 

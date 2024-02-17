@@ -95,7 +95,7 @@ export const createQuestionSchema = object({
             "problemLink cannot be duplicate for 2 questions change leetcode link",
         }
       ),
-    underWhichTopic: number({
+    underWhichTopic: string({
       required_error: "under which topic is required",
     }).refine(
       async (topicId) => {
@@ -110,7 +110,7 @@ export const createQuestionSchema = object({
 
 export const updateQuestionSchema = object({
   body: object({
-    questionId: number({ required_error: "questionId is required" }).refine(
+    questionId: string({ required_error: "questionId is required" }).refine(
       async (questionId) => {
         const question = await Question.findByPk(questionId);
         if (question) return true;
@@ -124,17 +124,7 @@ export const updateQuestionSchema = object({
       .nonempty({ message: "name can't be empty" })
       .min(5, "questionName should not be less than 5 characters")
       .max(30, "questionName should be not be greater than 30 characters")
-      .trim()
-      .refine(
-        async (questionName) => {
-          const question = await Question.findOne({
-            where: { name: questionName },
-          });
-          if (question) return true;
-          else return false;
-        },
-        { message: "question name does not  exists" }
-      ),
+      .trim(),
     description: string({
       required_error: "questionDescription is required",
     })
@@ -192,7 +182,7 @@ export const updateQuestionSchema = object({
           message: "Invalid link format",
         }
       ),
-    underWhichTopic: number({
+    underWhichTopic: string({
       required_error: "under which topic is required",
     }).refine(
       async (topicId) => {
@@ -207,7 +197,20 @@ export const updateQuestionSchema = object({
 
 export const deleteQuestionSchema = object({
   body: object({
-    questionId: number({ required_error: "questionId is required" }).refine(
+    questionId: string({ required_error: "questionId is required" }).refine(
+      async (questionId) => {
+        const question = await Question.findByPk(questionId);
+        if (question) return true;
+        else return false;
+      },
+      { message: "questionId does not exist" }
+    ),
+  }),
+});
+
+export const getQuestionByIdSchema = object({
+  query: object({
+    questionId: string({ required_error: "questionId is required" }).refine(
       async (questionId) => {
         const question = await Question.findByPk(questionId);
         if (question) return true;
