@@ -1,5 +1,3 @@
-change all models add id instead of uuid 
-work on all controllers aas models have changed
 do stronger validation
 postman collection
 check any missing todos

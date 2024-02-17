@@ -8,11 +8,13 @@ import routes from "./routes";
 import { makeConnectionWithDB } from "./db";
 import loadData from "./insertData";
 import { loadA2ZSheet } from "./script";
+import { limiter } from "./src/utils/rateLimiter";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(limiter);
 app.use(helmet());
 app.use(xss());
 
