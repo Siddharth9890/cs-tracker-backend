@@ -76,7 +76,7 @@ export const updateSubjectSchema = object({
 
 export const getSubjectByIdSchema = object({
   query: object({
-    subjectId: number({ required_error: "subjectId is required" }).refine(
+    subjectId: string({ required_error: "subjectId is required" }).refine(
       async (subjectId) => {
         const subject = await Subject.findByPk(subjectId);
         if (subject) return true;

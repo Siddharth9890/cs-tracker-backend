@@ -3,7 +3,7 @@ import express from "express";
 import topicUnderSubject from "../controller/topicUnderSubject.controller";
 import { validateAsync } from "../middleware/validateResources";
 import verifyAdminPermission from "../middleware/verifyAdminPermission";
-import { deleteSubjectByIdSchema } from "../schema/subject.schema";
+import { deleteSubjectByIdSchema, getSubjectByIdSchema } from "../schema/subject.schema";
 
 import {
   createTopicUnderSubjectSchema,
@@ -55,7 +55,7 @@ router.get(
 router.get(
   "/subject",
   verifyAdminPermission,
-  validateAsync(deleteSubjectByIdSchema),
+  validateAsync(getSubjectByIdSchema),
   topicUnderSubject.getAllTopicsUnderSubject
 );
 

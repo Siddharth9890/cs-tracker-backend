@@ -34,7 +34,7 @@ export const createTopicUnderSubjectSchema = object({
       .int("questionCount should be a integer")
       .lt(100, "questionCount should be less than 100")
       .gt(0, "questionCount should be greater than 0"),
-    underWhichSubject: number({
+    underWhichSubject: string({
       required_error: "underWhichSubject is required",
     }).refine(
       async (underWhichSubject) => {
@@ -51,7 +51,7 @@ export const createTopicUnderSubjectSchema = object({
 
 export const updateTopicUnderSubjectSchema = object({
   body: object({
-    topicId: number({ required_error: "topicId is required" }).refine(
+    topicId: string({ required_error: "topicId is required" }).refine(
       async (topicId) => {
         const topic = await TopicUnderSubject.findByPk(topicId);
         if (topic) return true;
@@ -75,7 +75,7 @@ export const updateTopicUnderSubjectSchema = object({
       .int("topicCount should be a integer")
       .lt(100, "topicCount should be less than 100")
       .gt(0, "topicCount should be greater than 0"),
-    underWhichSubject: number({
+    underWhichSubject: string({
       required_error: "underWhichSubject is required",
     }).refine(
       async (underWhichSubject) => {
@@ -90,7 +90,7 @@ export const updateTopicUnderSubjectSchema = object({
 
 export const deleteTopicUnderSubjectSchema = object({
   body: object({
-    topicId: number({ required_error: "topicId is required" }).refine(
+    topicId: string({ required_error: "topicId is required" }).refine(
       async (topicId) => {
         const topic = await TopicUnderSubject.findByPk(topicId);
         if (topic) return true;
@@ -103,7 +103,7 @@ export const deleteTopicUnderSubjectSchema = object({
 
 export const getTopicByIdSchema = object({
   query: object({
-    topicId: number({ required_error: "topicId is required" }).refine(
+    topicId: string({ required_error: "topicId is required" }).refine(
       async (topicId) => {
         const topic = await TopicUnderSubject.findByPk(topicId);
         if (topic) return true;

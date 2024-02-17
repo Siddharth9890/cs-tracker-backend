@@ -22,7 +22,7 @@ async function updateQuestion(request: Request, response: Response) {
   const body = request.body;
   try {
     const updatedQuestion = await updateQuestionDal(
-      parseInt(body.questionId as string),
+      body.questionId as string,
       body
     );
     successResponse(response, 201, updatedQuestion);
@@ -35,7 +35,7 @@ async function getQuestionsUnderATopic(request: Request, response: Response) {
   const topicId = request.query.topicId;
   try {
     const questions = await getQuestionsUnderTopicDal(
-      parseInt(topicId as string)
+      topicId as string
     );
     successResponse(response, 200, questions);
   } catch (error) {
@@ -46,7 +46,7 @@ async function getQuestionsUnderATopic(request: Request, response: Response) {
 async function getQuestionById(request: Request, response: Response) {
   const questionId = request.query.questionId;
   try {
-    const question = await getQuestionByIdDal(parseInt(questionId as string));
+    const question = await getQuestionByIdDal(questionId as string);
     successResponse(response, 200, question);
   } catch (error) {
     errorResponse(response, 500, error);
@@ -56,7 +56,7 @@ async function getQuestionById(request: Request, response: Response) {
 async function deleteQuestion(request: Request, response: Response) {
   const questionId = request.body.questionId;
   try {
-    await deleteQuestionByIdDal(parseInt(questionId as string));
+    await deleteQuestionByIdDal(questionId as string);
     successResponse(response, 200, { deleted: questionId });
   } catch (error) {
     errorResponse(response, 500, error);

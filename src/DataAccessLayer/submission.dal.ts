@@ -11,13 +11,13 @@ export const createSubmissionDal = async (
 };
 
 export const getSubmissionsDoneByUserDal = async (
-  email: string
+  userId: string
 ): Promise<SubmissionOutput[]> => {
   const submissions = await Submission.findAll({
-    where: { submitted_by: email },
+    where: { submittedBy: userId },
     limit: 20,
   });
-  if (submissions.length === 0) throw `revisions not found for ${email}`;
+  if (submissions.length === 0) throw `revisions not found for ${userId}`;
 
   return submissions;
 };
@@ -31,14 +31,14 @@ export const getOneQuestionDoneByUserDal = async (
 };
 
 export const getLatestSubmissionDal = async (
-  email: string,
-  questionName: string
+  userId: string,
+  questionId: string
 ): Promise<SubmissionOutput> => {
   const submission = await Submission.findOne({
-    where: { submitted_by: email, question_name: questionName },
+    where: { submittedBy: userId, questionId: questionId },
     order: [["completion_date", "DESC"]],
   });
   if (!submission)
-    throw `submission not found for ${email} and ${questionName}`;
+    throw `submission not found for ${userId} and ${questionId}`;
   return submission;
 };

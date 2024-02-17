@@ -7,13 +7,13 @@ export const createRevisionDal = async (
 };
 
 export const getRevisionsDoneByUserDal = async (
-  email: string
+  userId: string
 ): Promise<RevisionOutput[]> => {
   const revisions = await Revision.findAll({
-    where: { submitted_by: email },
+    where: { submittedBy: userId },
     limit: 20,
   });
-  if (revisions.length === 0) throw `revisions not found for ${email}`;
+  if (revisions.length === 0) throw `revisions not found for ${userId}`;
 
   return revisions;
 };
@@ -21,7 +21,7 @@ export const getRevisionsDoneByUserDal = async (
 export const deleteRevisionByEmailDal = async (id: string) => {
   return await Revision.destroy({
     where: {
-      revision_id: id,
+      id: id,
     },
   });
 };

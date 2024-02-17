@@ -7,7 +7,7 @@ export const createQuestionDal = async (
 };
 
 export const updateQuestionDal = async (
-  questionId: number,
+  questionId: string,
   payload: Partial<QuestionInput>
 ): Promise<QuestionOutput> => {
   const question = await Question.findByPk(questionId);
@@ -26,7 +26,7 @@ export const updateQuestionDal = async (
 };
 
 export const getQuestionsUnderTopicDal = async (
-  topicId: number
+  topicId: string
 ): Promise<QuestionOutput[]> => {
   const questions = await Question.findAll({
     where: { underWhichTopic: topicId },
@@ -37,13 +37,13 @@ export const getQuestionsUnderTopicDal = async (
 };
 
 export const getQuestionByIdDal = async (
-  questionId: number
+  questionId: string
 ): Promise<QuestionOutput> => {
   const question = await Question.findByPk(questionId);
   if (!question) throw "Question not found";
   return question;
 };
 
-export const deleteQuestionByIdDal = async (questionId: number) => {
+export const deleteQuestionByIdDal = async (questionId: string) => {
   return await Question.destroy({ where: { id: questionId } });
 };

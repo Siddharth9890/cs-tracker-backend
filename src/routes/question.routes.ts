@@ -5,9 +5,13 @@ import verifyAdminPermission from "../middleware/verifyAdminPermission";
 import {
   createQuestionSchema,
   deleteQuestionSchema,
+  getQuestionByIdSchema,
   updateQuestionSchema,
 } from "../schema/question.schema";
-import { deleteTopicUnderSubjectSchema } from "../schema/topicUnderSubject.schema";
+import {
+  deleteTopicUnderSubjectSchema,
+  getTopicByIdSchema,
+} from "../schema/topicUnderSubject.schema";
 
 const router = express.Router();
 
@@ -43,7 +47,7 @@ router.delete(
 router.get(
   "/",
   verifyAdminPermission,
-  validateAsync(deleteQuestionSchema),
+  validateAsync(getQuestionByIdSchema),
   questionController.getQuestionById
 );
 
@@ -52,7 +56,7 @@ router.get(
 router.get(
   "/topic",
   verifyAdminPermission,
-  validateAsync(deleteTopicUnderSubjectSchema),
+  validateAsync(getTopicByIdSchema),
   questionController.getQuestionsUnderATopic
 );
 
